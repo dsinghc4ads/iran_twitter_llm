@@ -1,0 +1,4 @@
+OPENAI_API_KEY="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"
+OPENAI_MODEL=""
+PERSIST_DIR=""
+DATA_PATH="data/first-20-rows.csv"

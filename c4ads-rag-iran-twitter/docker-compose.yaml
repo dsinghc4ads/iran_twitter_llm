@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    networks:
+      - app-tier
+
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    environment:
+      - IS_PERSISTENT=TRUE
+    volumes:
+      # Default configuration for persist_directory in chromadb/config.py
+      # Currently it's located in "/chroma/chroma/"
+      - ./chroma:/app/chroma/
+    ports:
+      - 8000:8000
+    networks:
+      - app-tier
+
+  ingest_service:
+    build:
+      context: .
+      dockerfile: ingest.Dockerfile
+    depends_on:
+      - redis
+      - chroma
+    networks:
+      - app-tier
+    volumes:
+      - ./:/app/
+      - ./app.py:/app/app.py
+    env_file:
+      - ./.env
+    ports:
+      - 8080:8080
+
+  streamlit_client:
+    build:
+      context: .
+      dockerfile: streamlit.Dockerfile
+    depends_on:
+      - redis
+      - chroma
+    ports:
+      - 8501:8501
+    networks:
+      - app-tier
+    volumes:
+      - ./:/app/
+      - ./streamlit.py:/app/streamlit.py
+    env_file:
+      - ./.env
+
+networks:
+  app-tier:
+    driver: bridge

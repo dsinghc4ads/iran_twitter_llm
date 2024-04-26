@@ -1,4 +1,4 @@
 OPENAI_API_KEY=""
 OPENAI_MODEL=""
 PERSIST_DIR=""
-DATA_PATH="data/first-20-rows.csv"
+DATA_PATH="data/pak_tweets.csv"
